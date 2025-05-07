@@ -1,7 +1,7 @@
 import os
 
 import requests
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 
@@ -12,10 +12,11 @@ CITY = "Paris"
 
 @app.get("/weather")
 def get_weather() -> any:
+    if not API_KEY:  # Check if API_KEY is missing
+        raise HTTPException(status_code=500, detail="API_KEY is missing. Set the environment variable.")
     response = requests.get(URL + f"key={API_KEY}&q={CITY}")
 
-#   if api_key is invalid
-    if response.status_code != 200:
+    if response.status_code != 200:  # if api_key is invalid
         return {"error": f"Failed to fetch weather data: {response.text}"}
     data = response.json()
     if "location" in data and "name" in data["location"]:
