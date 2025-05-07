@@ -13,7 +13,10 @@ CITY = "Paris"
 @app.get("/weather")
 def get_weather() -> any:
     if not API_KEY:  # Check if API_KEY is missing
-        raise HTTPException(status_code=500, detail="API_KEY is missing. Set the environment variable.")
+        raise HTTPException(
+            status_code=500,
+            detail="API_KEY is missing. Set the environment variable."
+        )
     response = requests.get(URL + f"key={API_KEY}&q={CITY}")
 
     if response.status_code != 200:  # if api_key is invalid
