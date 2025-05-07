@@ -11,7 +11,7 @@ CITY = "Paris"
 
 
 @app.get("/weather")
-def get_weather():
+def get_weather() -> any:
     response = requests.get(URL + f"key={API_KEY}&q={CITY}")
 
 #   if api_key is invalid
