@@ -1,21 +1,27 @@
 import os
 
 import requests
-from dotenv import load_dotenv
 from fastapi import FastAPI
+
 app = FastAPI()
-load_dotenv()
 
 URL = "http://api.weatherapi.com/v1/current.json?"
-API_KEY = os.getenv("API_KEY")
+API_KEY = os.environ.get("API_KEY")
 CITY = "Paris"
 
 
 @app.get("/weather")
-def get_weather() -> any:
+def get_weather():
     response = requests.get(URL + f"key={API_KEY}&q={CITY}")
+
+#   if api_key is invalid
+    if response.status_code != 200:
+        return {"error": f"Failed to fetch weather data: {response.text}"}
     data = response.json()
-    location_name = data["location"]["name"]
+    if "location" in data and "name" in data["location"]:
+        location_name = data["location"]["name"]
+    else:
+        return {"error": "Invalid response structure", "raw_data": data}
     temperature = data["current"]["temp_c"]
     condition = data["current"]["condition"]["text"]
 
